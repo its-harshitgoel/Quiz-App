@@ -19,7 +19,7 @@
     background-color: #56a5eb;
     color: white;
   }
-   
+  
   .choice-text {
     padding: 1.5rem;
     width: 100%;
@@ -31,4 +31,18 @@
   
   .incorrect {
     background-color: #dc3545;
+  }
+  
+  #hud {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .hud-prefix {
+    text-align: center;
+    font-size: 2rem;
+  }
+  
+  .hud-main-text {
+    text-align: center;
   }
