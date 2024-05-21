@@ -1,3 +1,11 @@
+const question = document.getElementById('question');
+const choices = Array.from(document.getElementsByClassName('choice-text'));
+
+let currentQuestion = {};
+let acceptingAnswers = false; //to create delay between questions and it is set to false initially to prevent user from answering before everything is loaded
+let score = 0;
+let questionCounter = 0;
+let availableQuesions = []; //copy of full question set, to always find unique questions
 let questions = [
     {
         question: 'Which HTML tag is used to define an inline style?',
@@ -25,25 +33,56 @@ let questions = [
     },
 ];
 
+// //CONSTANTS
 
-let currentQuestion = 0;
-let score = 0;
+const CORRECT_BONUS = 10;
+const MAX_QUESTIONS = 3;
 
-let questionElement = document.getElementById('question');
-let choice1 = document.getElementById('choice1');
-let choice2 = document.getElementById('choice2');
-let choice3 = document.getElementById('choice3');
-let choice4 = document.getElementById('choice4');
+startGame = () => {
+    questionCounter = 0;
+    score = 0;
+    availableQuesions = [...questions]; //spread opereator (...) to copy questions array
+    getNewQuestion();
+};
 
-let scoreElement = document.getElementById('score');
-let progressText = document.getElementById('progressText');
+getNewQuestion = () => {
+    if (availableQuesions.length === 0 || questionCounter >= MAX_QUESTIONS) {
+        return window.location.assign('/end.html');
+    }
+    questionCounter++;
+    const questionIndex = Math.floor(Math.random() * availableQuesions.length);
+    currentQuestion = availableQuesions[questionIndex];
+    question.innerText = currentQuestion.question;
 
-dipslayQuestion = () => {
-    let question = questions[currentQuestion];
-    questionElement.innerText = question.question;
-    choice1.innerText = question.choice1;
-    choice2.innerText = question.choice2;
-    choice3.innerText = question.choice3;
-    choice4.innerText = question.choice4;
-}
+    choices.forEach((choice) => {
+        const number = choice.dataset['number'];
+        choice.innerText = currentQuestion['choice' + number];
+    });
+
+    availableQuesions.splice(questionIndex, 1);
+    acceptingAnswers = true;
+};
+
+choices.forEach((choice) => {
+    choice.addEventListener('click', (e) => {
+        if (!acceptingAnswers) return;
+
+        acceptingAnswers = false;
+        const selectedChoice = e.target;
+        const selectedAnswer = selectedChoice.dataset['number'];
+
+        const classToApply = selectedAnswer == currentQuestion.answer ? 'correct' : 'incorrect';
+        selectedChoice.parentElement.classList.add(classToApply);
+
+        setTimeout(() => {
+            selectedChoice.parentElement.classList.remove(classToApply);
+            getNewQuestion();
+        }, 1000);
+
+    });
+});
+
+
+
+startGame();
 
